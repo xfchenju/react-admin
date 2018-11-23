@@ -1,25 +1,34 @@
 import React, { Component } from 'react';
-import { Router, Route, Switch } from 'react-router-dom';
-import history from '../components/common/history';
+import { BrowserRouter as Router, Route, Switch, Link } from 'react-router-dom';
 
-import App from '../App';
-// import Login from '../components/common/Login';
-// import Home from '../components/common/Home';
-// import NoMatch from '../components/common/404';
+import Home from '../components/Home/Home';
+import About from '../components/About/About';
+import Help from '../components/Help/Help';
 
-class MRoute extends Component {
+const Index = () => <h2>首页</h2>;
+
+
+class MRoute1 extends Component {
   render() {
     return (
-      <Router history={history}>
-        <Switch>
-          {/*<Route exact path="/" component={Home}/>*/}
-          <Route path="/app" component={App}/>
-          {/*<Route path="/login" component={Login}/>
-          <Route component={NoMatch}/>*/}
-        </Switch>
+      <Router>
+        <div>
+          <nav>
+            <ul>
+              <li><Link to="/">Home</Link></li>
+              <li><Link to="/index">Index</Link></li>
+              <li><Link to="/about">About</Link></li>
+              <li><Link to="/help">Help</Link></li>
+            </ul>
+          </nav>
+          <Route exact path="/" component={Home}></Route>
+          <Route path="/index" component={Index}></Route>
+          <Route path="/about" component={About}></Route>
+          <Route path="/help" component={Help}></Route>
+        </div>
       </Router>
     );
   }
 }
 
-export default MRoute;
+export default MRoute1;
