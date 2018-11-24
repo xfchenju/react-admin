@@ -110,10 +110,10 @@ export default class App extends Component {
             </Menu>
           </Sider>
           <Layout>
-            <Header style={{ background: '#fff', padding: 0 }}>
+            <Header style={{ background: '#fff', padding: 0}}>
               <Icon className="trigger"  type={this.state.collapsed ? 'menu-unfold' : 'menu-fold'} onClick={this.toggle} />
             </Header>
-            <Content style={{ margin: '24px 16px', padding: 24, background: '#fff', minHeight: 280 }}>
+            <Content style={{ overflowY: 'auto'}}>
               <Switch> 
                 <Route exact path="/app/home" component={Home}/>  
                 <Route path="/app/help" component={Help}/>  
@@ -123,9 +123,9 @@ export default class App extends Component {
                 <Route component={NoMatch}/> 
               </Switch>
             </Content>
-            <Footer style={{background: '#fff', textAlign: 'center'}}>
+            {/*<Footer style={{background: '#fff', textAlign: 'center'}}>
               MSPA ©2018-2019 Created by Chenju
-            </Footer>
+            </Footer>*/}
           </Layout>
         </Layout>
       </Router>

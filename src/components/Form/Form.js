@@ -14,20 +14,22 @@ export default class MForm extends Component {
   }
 	render() {
 		return (
-		  <Form style={{width: 400}}>
-        <FormItem label="asd">
-          <Input prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Username" />
-        </FormItem>
-        <FormItem>
-          <Input prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Username" />
-        </FormItem>
-        <FormItem>
-          <Input prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Username" />
-        </FormItem>
-        <FormItem>
-          <Button type="primary">提交</Button>
-        </FormItem>
-      </Form>
+      <div style={{ margin: '24px 16px', padding: 24, minHeight: 280, background: '#fff' }}>
+  		  <Form style={{width: 400}}>
+          <FormItem label="asd">
+            <Input prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Username" />
+          </FormItem>
+          <FormItem>
+            <Input prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Username" />
+          </FormItem>
+          <FormItem>
+            <Input prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Username" />
+          </FormItem>
+          <FormItem>
+            <Button type="primary">提交</Button>
+          </FormItem>
+        </Form>
+      </div>
 		);
 	}
 }

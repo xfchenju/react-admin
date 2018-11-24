@@ -92,7 +92,7 @@ export default class MTable extends Component {
 			},
 		}
 		return (
-			<div>
+			<div style={{ margin: '24px 16px', padding: 24, minHeight: 280, background: '#fff' }}>
 				<Table dataSource={dataSource} columns={columns} />
 				<Modal title="Basic Modal" visible={this.state.visible} onOk={this.handleOk.bind(this)} onCancel={this.handleCancel.bind(this)}>
 					<Form>
