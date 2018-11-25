@@ -1,5 +1,10 @@
 import React, { Component } from 'react';
-import echarts from 'echarts' //必须
+import echarts from 'echarts/lib/echarts' //必须
+import 'echarts/lib/component/tooltip'
+import 'echarts/lib/component/legend'
+import 'echarts/lib/chart/pie'
+import 'echarts/lib/chart/line'
+import 'echarts/lib/chart/radar' //引入雷达图
 
 export default class Echarts extends Component {
 	constructor(props) {

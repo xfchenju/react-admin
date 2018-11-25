@@ -1,15 +1,65 @@
 import React, { Component } from 'react';
 import { Table, Button, Modal, Form, Input } from 'antd';
+import { Link } from 'react-router-dom'
 
 const FormItem = Form.Item;
+
+const dataSource = [{
+  key: '1',
+  name: '胡彦斌',
+  age: 32,
+  address: '西湖区湖底公园1号',
+  op: 0
+}, {
+  key: '2',
+  name: '胡彦祖',
+  age: 42,
+  address: '西湖区湖底公园1号',
+  op: 1
+}];
+
+
 
 export default class MTable extends Component {
 	constructor(props) {
 	    super(props);
 	    this.state = {
 	    	visible: false, 
-	    	name: '' 
+	    	name: '',
+	    	tableData: [],
+	    	columns: []
 	    };
+	}
+
+	componentWillMount() {
+		const columns = [{
+		  title: '姓名',
+		  dataIndex: 'name',
+		  key: 'name',
+		}, {
+		  title: '年龄',
+		  dataIndex: 'age',
+		  key: 'age',
+		}, {
+		  title: '住址',
+		  dataIndex: 'address',
+		  key: 'address',
+		}, {
+		  title: '操作',
+		  dataIndex: 'op',
+		  key: 'op',
+		  render: (id) => (
+		  	<span>
+		  		<Button type="primary" size="small" icon="edit" onClick={()=>this.onClick(id)}>修改</Button>
+		  		<Link to="/app">返回首页</Link>
+		  	</span>
+		  )
+		}];
+
+		this.setState({
+			tableData: dataSource,
+			columns: columns
+		});
 	}
 
 	onClick = (id) => {
@@ -44,42 +94,7 @@ export default class MTable extends Component {
 	}
 
 	render() {
-		const dataSource = [{
-		  key: '1',
-		  name: '胡彦斌',
-		  age: 32,
-		  address: '西湖区湖底公园1号',
-		  op: 0
-		}, {
-		  key: '2',
-		  name: '胡彦祖',
-		  age: 42,
-		  address: '西湖区湖底公园1号',
-		  op: 1
-		}];
-
-		const columns = [{
-		  title: '姓名',
-		  dataIndex: 'name',
-		  key: 'name',
-		}, {
-		  title: '年龄',
-		  dataIndex: 'age',
-		  key: 'age',
-		}, {
-		  title: '住址',
-		  dataIndex: 'address',
-		  key: 'address',
-		}, {
-		  title: '操作',
-		  dataIndex: 'op',
-		  key: 'op',
-		  render: (id) => (
-		  	<span>
-		  		<Button type="primary" size="small" icon="edit" onClick={()=>this.onClick(id)}>修改</Button>
-		  	</span>
-		  )
-		}];
+		const { tableData, columns } = this.state;		
 
 		const formItemLayout = {
 			labelCol: {
@@ -93,7 +108,7 @@ export default class MTable extends Component {
 		}
 		return (
 			<div style={{ margin: '24px 16px', padding: 24, minHeight: 280, background: '#fff' }}>
-				<Table dataSource={dataSource} columns={columns} />
+				<Table dataSource={tableData} columns={columns} />
 				<Modal title="Basic Modal" visible={this.state.visible} onOk={this.handleOk.bind(this)} onCancel={this.handleCancel.bind(this)}>
 					<Form>
 						<FormItem {...formItemLayout} label="姓名" required>

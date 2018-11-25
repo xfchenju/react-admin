@@ -1,23 +1,23 @@
 import React, { Component } from 'react';
-import { BrowserRouter as Router, Route, Switch, Link} from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch, Link, Redirect } from 'react-router-dom';
 import { Layout, Menu, Icon } from 'antd';
 import './App.css';
 
-import Home from './components/Home/Home';
-import Help from './components/Help/Help';
-import About from './components/About/About';
-import Table from './components/Table/Table';
-import Form from './components/Form/Form';
-import NoMatch from './components/common/404';
+import Home from '../Home/Home';
+import Help from '../Help/Help';
+import About from '../About/About';
+import Table from '../Table/Table';
+import Form from '../Form/Form';
+import NoMatch from '../common/404';
 
-const { Header, Sider, Content, Footer } = Layout;
+const { Header, Sider, Content } = Layout;
 
 // 路由数组
 const routerArr = [
   {
     'key': 1,
     'name': '首页',
-    'path': '/app/home',
+    'path': '/app',
     'icon': 'home'
   },
   {
@@ -115,7 +115,7 @@ export default class App extends Component {
             </Header>
             <Content style={{ overflowY: 'auto'}}>
               <Switch> 
-                <Route exact path="/app/home" component={Home}/>  
+                <Route exact path="/app" component={Home}/>  
                 <Route path="/app/help" component={Help}/>  
                 <Route path="/app/about" component={About}/>  
                 <Route path="/app/table" component={Table}/>  
