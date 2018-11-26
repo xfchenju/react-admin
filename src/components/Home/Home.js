@@ -4,8 +4,8 @@ import CountUp from 'react-countup';
 // 图表
 import Echarts from '../Echarts/Echarts';
 // 配置文件
-import { pieOptions, lineOptions, radarOptions } from '../../config/EchartsConfig';
-
+import { pieOptions } from '../../config/EchartsConfig';
+//, lineOptions, radarOptions
 const Meta = Card.Meta;
 
 const Panel = Collapse.Panel;
@@ -25,14 +25,12 @@ const author = [
     " —— 伏尔泰"
 ];
 
-
-
-
 export default class Home extends Component {
 
 	CountUp(){
 	    let imgSrc = ["mail","wechat","shopping-cart","heart"];
 	    let imgColor = ["lightblue","green","pink","red"];
+	    let imgIconType = ["outlined","outlined","outlined","filled"];
 	    let imgName = ["Mails","Dialogue","Carts","Collection"];
 	    let count = ["1379","768","192","413"];
 	    let cu = imgSrc.map(function(item,index){
@@ -42,7 +40,7 @@ export default class Home extends Component {
 	                      actions={[<Icon type="info-circle-o" />, <Icon type="ellipsis" />]}>
 	                    <Meta
 	                        style={{fontSize:22}}
-	                        avatar={<Icon type={item} style={{fontSize: 64, color: imgColor[index]}} />}
+	                        avatar={<Icon type={item} theme={imgIconType[index]} style={{fontSize: 64, color: imgColor[index]}} />}
 	                        title={imgName[index]}
 	                        description={<CountUp start={0} end={count[index]} duration={2.75}/>}
 	                    />
