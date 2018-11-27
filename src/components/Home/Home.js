@@ -42,7 +42,7 @@ export default class Home extends Component {
 	                        style={{fontSize:22}}
 	                        avatar={<Icon type={item} theme={imgIconType[index]} style={{fontSize: 64, color: imgColor[index]}} />}
 	                        title={imgName[index]}
-	                        description={<CountUp start={0} end={count[index]} duration={2.75}/>}
+	                        description={<CountUp start={0} end={Number(count[index])} duration={2.75}/>}
 	                    />
 	                </Card>
 	            </Col>

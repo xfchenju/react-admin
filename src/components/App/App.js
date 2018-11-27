@@ -8,9 +8,11 @@ import Help from '../Help/Help';
 import About from '../About/About';
 import Table from '../Table/Table';
 import Form from '../Form/Form';
+import Setting from '../Setting/Setting';
 import NoMatch from '../common/404';
 
 const { Header, Sider, Content } = Layout;
+const SubMenu = Menu.SubMenu;
 
 // 路由数组
 const routerArr = [
@@ -36,13 +38,40 @@ const routerArr = [
     'key': 4,
     'name': '关于',
     'path': '/app/about',
-    'icon': 'home'
+    'icon': 'home',
+    'children': [
+      {
+        'key': 5,
+        'name': '帮助',
+        'path': '/app/help',
+        'icon': 'home'
+      },
+    ]
   },
   {
-    'key': 5,
-    'name': '帮助',
-    'path': '/app/help',
-    'icon': 'home'
+    'key': 6,
+    'name': '设置',
+    'icon': 'setting',
+    'children': [
+      {
+        'key': 8,
+        'name': '个人设置',
+        'path': '/app/setting',
+        'icon': 'setting'
+      },
+      {
+        'key': 9,
+        'name': '修改密码',
+        'path': '/app/changePwd',
+        'icon': 'setting'
+      },
+    ]
+  },
+  {
+    'key': 7,
+    'name': '404',
+    'path': '/app/404',
+    'icon': 'smile'
   },
 ]
 
@@ -53,7 +82,9 @@ export default class App extends Component {
         // 导航栏是否隐藏
         collapsed: localStorage.getItem('menu-collapsed') === "true",
         // 导航栏选中的item
-        selectedKey: ['']
+        selectedKey: [''],
+        // 导航栏打开的栏目
+        openKey: null
     }
   }
   // 导航栏的显示隐藏
@@ -67,21 +98,35 @@ export default class App extends Component {
   }
   // 点击MenuItem时 改变Menu选中的selectedKeys
   changeMenu = (item) => {
+    console.log(item, 'menu')
     this.setState({
-      'selectedKey': [String(item.keyPath)]
+      'selectedKey': [String(item.key)]
     });
+    localStorage.setItem('selected-key', [String(item.key)])
+  }
+  openMenu = (item) => {
+    console.log(item, 'open')
+    this.setState({
+      'openKey': item
+    });
+    localStorage.setItem('open-key', item.join('|'));
   }
   componentDidMount() {
     // 当前路由
-    let thisRouter = this.props.location.pathname;
+    // let thisRouter = this.props.location.pathname;
     // 当前路由对应的路由数组
-    let thisRouterArr = routerArr.find(n =>n.path === thisRouter);
+    // let thisRouterArr = routerArr.find(n =>n.path === thisRouter);
+    //console.log(thisRouterArr, 'thisRouterArr');
     // 如果在路由数组中找到对应路由 设置导航栏选中该路由的MenuItem
-    if(thisRouterArr) {
-      this.setState({
-        'selectedKey': [String(thisRouterArr.key)]
-      });
-    }
+    // if(thisRouterArr) {
+      
+    // }
+    this.setState({
+      'selectedKey': localStorage.getItem('selected-key') ? [String(localStorage.getItem('selected-key'))] : [''],
+      'openKey': localStorage.getItem('open-key') ? localStorage.getItem('open-key').split("|") : [''],
+    }, function() {
+      console.log(this.state, 'state')
+    });
     // 是否隐藏导航栏
     // if(localStorage.getItem('menu-collapsed') !== null) {
     //   localStorage.setItem('menu-collapsed', false)
@@ -90,14 +135,32 @@ export default class App extends Component {
   render() {
     // 导航栏元素
     const MenuItems = routerArr.map(item => {
-      return (
-        <Menu.Item key={item.key}>
-          <Link to={item.path}>
-            <Icon type={item.icon} />
-            <span>{item.name}</span>
-          </Link>
-        </Menu.Item>
-      );
+      if(item['children']){
+        let innerMenu = item.children.map(citem => {
+          return (
+            <Menu.Item key={citem.key}>
+              <Link to={citem.path}>
+                <Icon type={citem.icon} />
+                <span>{citem.name}</span>
+              </Link>
+            </Menu.Item>
+          );
+        })
+        return (
+          <SubMenu key={item.key} title={<span><Icon type={item.icon} /><span>{item.name}</span></span>}>
+            {innerMenu}
+          </SubMenu>
+        )
+      }else {
+        return (
+          <Menu.Item key={item.key}>
+            <Link to={item.path}>
+              <Icon type={item.icon} />
+              <span>{item.name}</span>
+            </Link>
+          </Menu.Item>
+        );
+      }
     });
 
     return (
@@ -105,7 +168,7 @@ export default class App extends Component {
         <Layout id="components-layout-demo-custom-trigger">
           <Sider trigger={null} collapsible collapsed={this.state.collapsed}>
             <div className="logo" />
-            <Menu theme="dark" mode="inline" selectedKeys={this.state.selectedKey} onClick={this.changeMenu}>
+            <Menu theme="dark" mode="inline" selectedKeys={this.state.selectedKey} openKeys={this.state.openKey} onClick={this.changeMenu} onOpenChange={this.openMenu}> 
               {MenuItems}
             </Menu>
           </Sider>
@@ -120,6 +183,7 @@ export default class App extends Component {
                 <Route path="/app/about" component={About}/>  
                 <Route path="/app/table" component={Table}/>  
                 <Route path="/app/form" component={Form}/>  
+                <Route path="/app/setting" component={Setting}/>  
                 <Route component={NoMatch}/> 
               </Switch>
             </Content>
