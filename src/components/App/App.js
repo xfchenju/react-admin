@@ -9,6 +9,8 @@ import About from '../About/About';
 import Table from '../Table/Table';
 import Form from '../Form/Form';
 import Setting from '../Setting/Setting';
+import ChangePwd from '../ChangePwd/ChangePwd';
+import Demo from '../Demo/Demo';
 import NoMatch from '../common/404';
 
 const { Header, Sider, Content } = Layout;
@@ -54,23 +56,29 @@ const routerArr = [
     'icon': 'setting',
     'children': [
       {
-        'key': 8,
+        'key': 7,
         'name': '个人设置',
         'path': '/app/setting',
-        'icon': 'setting'
+        'icon': 'user'
       },
       {
-        'key': 9,
+        'key': 8,
         'name': '修改密码',
         'path': '/app/changePwd',
-        'icon': 'setting'
+        'icon': 'lock'
       },
     ]
   },
   {
-    'key': 7,
+    'key': 9,
     'name': '404',
     'path': '/app/404',
+    'icon': 'smile'
+  },
+  {
+    'key': 10,
+    'name': 'demo',
+    'path': '/app/demo',
     'icon': 'smile'
   },
 ]
@@ -92,20 +100,17 @@ export default class App extends Component {
     this.setState({
       collapsed: !this.state.collapsed,
     }, function() {
-      console.log(this.state.collapsed, 'this.state.collapsed');
       localStorage.setItem('menu-collapsed', this.state.collapsed);
     });
   }
   // 点击MenuItem时 改变Menu选中的selectedKeys
   changeMenu = (item) => {
-    console.log(item, 'menu')
     this.setState({
       'selectedKey': [String(item.key)]
     });
     localStorage.setItem('selected-key', [String(item.key)])
   }
   openMenu = (item) => {
-    console.log(item, 'open')
     this.setState({
       'openKey': item
     });
@@ -124,8 +129,6 @@ export default class App extends Component {
     this.setState({
       'selectedKey': localStorage.getItem('selected-key') ? [String(localStorage.getItem('selected-key'))] : [''],
       'openKey': localStorage.getItem('open-key') ? localStorage.getItem('open-key').split("|") : [''],
-    }, function() {
-      console.log(this.state, 'state')
     });
     // 是否隐藏导航栏
     // if(localStorage.getItem('menu-collapsed') !== null) {
@@ -184,6 +187,8 @@ export default class App extends Component {
                 <Route path="/app/table" component={Table}/>  
                 <Route path="/app/form" component={Form}/>  
                 <Route path="/app/setting" component={Setting}/>  
+                <Route path="/app/changePwd" component={ChangePwd}/>  
+                <Route path="/app/demo" component={Demo}/>  
                 <Route component={NoMatch}/> 
               </Switch>
             </Content>

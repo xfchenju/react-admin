@@ -127,9 +127,9 @@ export default class MTable extends Component {
 		  title: '操作',
 		  dataIndex: 'order_id',
 		  key: 'order_id',
-		  render: (id) => (
+		  render: (id, record) => (
 		  	<span>
-		  		<Button type="primary" size="small" icon="edit" onClick={this.onClick.bind(this, id)}>修改</Button>
+		  		<Button type="primary" size="small" icon="edit" onClick={this.onClick.bind(this, id, record)}>修改</Button>
 		  	</span>
 		  )
 		}];
@@ -161,7 +161,7 @@ export default class MTable extends Component {
 		window.open(this.state.viewLargeImageSrc);
 	}
 
-	onClick = (id) => {
+	onClick = (id, record) => {
 		this.setState({
 			'visible': true
 		})
@@ -277,7 +277,7 @@ export default class MTable extends Component {
 	}
 
 	render() {
-		const { tableData, columns, loading, dataPerPage, dataPage, total, statusArr } = this.state;		
+		const { tableData, columns, loading, dataPerPage, dataPage, total } = this.state;		
 
 		const formItemLayout = {
 			labelCol: {
