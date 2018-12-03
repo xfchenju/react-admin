@@ -180,3 +180,7 @@ export const submitDeductionsListMoney = params => post('/admin/cut/cut-money', 
 export const getDeductionsListAuditDatas = params => post('/admin/cut/audit-list', params);
 // 扣款审核操作
 export const submitDeductionListAudit = params => post('/admin/cut/audit-deal', params);
+
+
+// 登录
+export const login = params => post('/api/v1/user/login', params);

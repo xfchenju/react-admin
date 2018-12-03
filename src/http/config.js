@@ -29,7 +29,7 @@ axios.defaults.headers.common['client-id'] = '2';
 // }else {
 // 	axios.defaults.baseURL = process.env.API_PATH_DEV;
 // }
-axios.defaults.baseURL = 'http://192.168.1.94/';
+axios.defaults.baseURL = 'http://localhost:3002/';
 // axios.defaults.baseURL = process.env.API_ROOT;
 // 全局基础域名
 global.baseURL = axios.defaults.baseURL;

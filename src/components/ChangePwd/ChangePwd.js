@@ -20,21 +20,22 @@ class ChangePwd extends Component {
 		let newPassword = value;
 		let repeatNewPassword = this.props.form.getFieldValue('repeatNewPassword');
 		let repeatNewPasswordError = this.props.form.getFieldError('repeatNewPassword');
-		if(newPassword && repeatNewPassword && newPassword != repeatNewPassword) {
+		if(newPassword && repeatNewPassword && newPassword !== repeatNewPassword) {
 			callback('两次密码不一致');	
 		}else {
 			if(repeatNewPasswordError) {
 				const errors = repeatNewPasswordError.filter(item => {
 					if(item !== '两次密码不一致') {
 						return item
+					}else {
+						return {}
 					}
-				})
+				});
 				if(errors.length > 0) {
 					this.props.form.setFields({'repeatNewPassword': {value: repeatNewPassword, errors: errors.map(item=>{return new Error(item)})}});
 				}else {
 					this.props.form.setFields({'repeatNewPassword': {value: repeatNewPassword, errors: null }});
 				}
-				
 			}
 		}
 		callback();
@@ -44,13 +45,15 @@ class ChangePwd extends Component {
 		let newPassword = this.props.form.getFieldValue('newPassword');
 		let repeatNewPassword = value;
 		let newPasswordError = this.props.form.getFieldError('newPassword');
-		if(newPassword != repeatNewPassword) {
+		if(newPassword !== repeatNewPassword) {
 			callback('两次密码不一致');
 		}else {
 			if(newPasswordError) {
 				const errors = newPasswordError.filter(item => {
 					if(item !== '两次密码不一致') {
 						return item
+					}else {
+						return {}
 					}
 				})
 				if(errors.length > 0) {

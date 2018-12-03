@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { BrowserRouter as Router, Route, Switch, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch, Link, Redirect } from 'react-router-dom';
 import { Layout, Menu, Icon } from 'antd';
 import './App.css';
 
@@ -136,6 +136,11 @@ export default class App extends Component {
     // }
   }
   render() {
+    console.log('1111111111111111111111', localStorage.getItem("mspa_user"))
+    if (localStorage.getItem("mspa_user") === null) {
+        return <Redirect to="/login"/>
+    } else {
+    }
     // 导航栏元素
     const MenuItems = routerArr.map(item => {
       if(item['children']){
