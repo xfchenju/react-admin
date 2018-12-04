@@ -10,9 +10,9 @@ class MRoute extends Component {
     return (
       <Router>
         <Switch>
-          <Route exact path="/" component={App}></Route>
           <Route path="/app" component={App}></Route>
           <Route path="/login" component={Login}></Route>
+          <Route path="/" component={App}></Route>
           <Route component={NoMatch}></Route>
         </Switch>
       </Router>

@@ -71,7 +71,7 @@ axios.interceptors.request.use(config => {
 	var token = window.localStorage.getItem('token')
 	if(token) {
 		// 在头部中加上Authorziation字段 内容为token
-		config.headers.Authorization = token;
+		config.headers.Authorization = `Bearer ${token}`;
 	}
 	// console.log(axiosNum, 'axiosNum-rq')
 	return config;

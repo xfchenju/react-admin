@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { BrowserRouter as Router, Route, Switch, Link, Redirect } from 'react-router-dom';
-import { Layout, Menu, Icon } from 'antd';
+import { BrowserRouter as Router, Route, Switch, Link } from 'react-router-dom';
+import { Layout, Menu, Icon, Button, Popconfirm, message  } from 'antd';
 import './App.css';
 
 import Home from '../Home/Home';
@@ -12,6 +12,8 @@ import Setting from '../Setting/Setting';
 import ChangePwd from '../ChangePwd/ChangePwd';
 import Demo from '../Demo/Demo';
 import NoMatch from '../common/404';
+
+import { logout } from '../../http/api'
 
 const { Header, Sider, Content } = Layout;
 const SubMenu = Menu.SubMenu;
@@ -95,6 +97,7 @@ export default class App extends Component {
         openKey: null
     }
   }
+
   // 导航栏的显示隐藏
   toggle = () => {
     this.setState({
@@ -116,6 +119,25 @@ export default class App extends Component {
     });
     localStorage.setItem('open-key', item.join('|'));
   }
+
+  // 注销
+  _logout = () => {
+    logout().then((res)=>{
+      let code = res.data.code;
+      let msg = res.data.msg;
+      if(code === 200) {
+        localStorage.clear();
+        message.success('注销成功!');
+        setTimeout(()=>{
+          this.props.history.push('/');
+        }, 300);
+      }else {
+        message.error(msg);
+      }
+    }).catch((err)=>{
+      message.error('异常错误');
+    })
+  }
   componentDidMount() {
     // 当前路由
     // let thisRouter = this.props.location.pathname;
@@ -136,9 +158,8 @@ export default class App extends Component {
     // }
   }
   render() {
-    console.log('1111111111111111111111', localStorage.getItem("mspa_user"))
-    if (localStorage.getItem("mspa_user") === null) {
-        return <Redirect to="/login"/>
+    if (localStorage.getItem("user") === null) {
+      this.props.history.push('/login');
     } else {
     }
     // 导航栏元素
@@ -182,7 +203,10 @@ export default class App extends Component {
           </Sider>
           <Layout>
             <Header style={{ background: '#fff', padding: 0}}>
-              <Icon className="trigger"  type={this.state.collapsed ? 'menu-unfold' : 'menu-fold'} onClick={this.toggle} />
+              <Icon className="trigger" type={this.state.collapsed ? 'menu-unfold' : 'menu-fold'} onClick={this.toggle} />
+              <Popconfirm title="您确定要注销吗？" onConfirm={this._logout} okText="是的" cancelText="取消">
+                <Button >注销</Button>
+              </Popconfirm>
             </Header>
             <Content style={{ overflowY: 'auto'}}>
               <Switch> 
