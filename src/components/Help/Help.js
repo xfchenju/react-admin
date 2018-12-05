@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Button } from 'antd';
-import { getAllUsers } from '../../http/api';
+import { getUsersList } from '../../http/api';
 
 export default class Help extends Component {
 	constructor(props) {
@@ -18,7 +18,7 @@ export default class Help extends Component {
 		this.setState({
 			loading: true
 		})
-		getAllUsers(data).then((res)=>{
+		getUsersList(data).then((res)=>{
 			this.setState({
 				loading: false
 			})

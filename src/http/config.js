@@ -19,6 +19,7 @@ var isLoading = true
 // 请求的超时时间
 axios.defaults.timeout = TIMEOUT;
 // post请求头设置
+// axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 // 后台必带参数
 axios.defaults.headers.common['client-id'] = '2';

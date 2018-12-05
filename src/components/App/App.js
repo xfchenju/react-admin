@@ -8,6 +8,7 @@ import Help from '../Help/Help';
 import About from '../About/About';
 import Table from '../Table/Table';
 import Form from '../Form/Form';
+import UsersList from '../UsersList/UsersList';
 import Setting from '../Setting/Setting';
 import ChangePwd from '../ChangePwd/ChangePwd';
 import Demo from '../Demo/Demo';
@@ -28,24 +29,30 @@ const routerArr = [
   },
   {
     'key': 2,
+    'name': '用户管理',
+    'path': '/app/users-list',
+    'icon': 'user'
+  },,
+  {
+    'key': 3,
     'name': '表格',
     'path': '/app/table',
     'icon': 'table'
   },
   {
-    'key': 3,
+    'key': 4,
     'name': '表单',
     'path': '/app/form',
     'icon': 'form'
   },
   {
-    'key': 4,
+    'key': 5,
     'name': '关于',
     'path': '/app/about',
     'icon': 'home',
     'children': [
       {
-        'key': 5,
+        'key': 6,
         'name': '帮助',
         'path': '/app/help',
         'icon': 'home'
@@ -53,18 +60,18 @@ const routerArr = [
     ]
   },
   {
-    'key': 6,
+    'key': 7,
     'name': '设置',
     'icon': 'setting',
     'children': [
       {
-        'key': 7,
+        'key': 8,
         'name': '个人设置',
         'path': '/app/setting',
         'icon': 'user'
       },
       {
-        'key': 8,
+        'key': 9,
         'name': '修改密码',
         'path': '/app/changePwd',
         'icon': 'lock'
@@ -72,13 +79,13 @@ const routerArr = [
     ]
   },
   {
-    'key': 9,
+    'key': 10,
     'name': '404',
     'path': '/app/404',
     'icon': 'smile'
   },
   {
-    'key': 10,
+    'key': 11,
     'name': 'demo',
     'path': '/app/demo',
     'icon': 'smile'
@@ -211,6 +218,7 @@ export default class App extends Component {
             <Content style={{ overflowY: 'auto'}}>
               <Switch> 
                 <Route exact path="/app" component={Home}/>  
+                <Route path="/app/users-list" component={UsersList}/>  
                 <Route path="/app/help" component={Help}/>  
                 <Route path="/app/about" component={About}/>  
                 <Route path="/app/table" component={Table}/>  

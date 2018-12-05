@@ -5,7 +5,7 @@ export const login = params => post('/api/v1/user/login', params);
 // 注销
 export const logout = params => post('/api/v1/user/logout', params);
 // 获取所有用户
-export const getAllUsers = params => get('/api/v1/user/get-all-users', params);
+export const getUsersList = params => get('/api/v1/user/get-users-list', params);
 
 
 // /*通用*/

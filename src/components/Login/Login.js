@@ -69,8 +69,8 @@ class Login extends Component {
 							  <Input type="password" prefix={<Icon type="lock" style={{ fontSize: 13 }} />} placeholder="请输入密码" autoComplete="off" />
 							)}
 						</FormItem>
-						<FormItem class="login__btnWrap">
-							<Button htmlType="submit">登录</Button>
+						<FormItem className="login__btnWrap">
+							<Button htmlType="submit" className="login__btnWrap">登录</Button>
 						</FormItem>
 					</Form>
 				</Content>
