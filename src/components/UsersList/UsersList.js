@@ -1,15 +1,13 @@
 import React, { Component } from 'react';
-import { Button, Table, Pagination, Input, Form, message } from 'antd';
-//Modal, DatePicker, 
+import { Button, Table, Pagination, Input, Form } from 'antd';
 import { getUsersList } from '../../http/api';
 import moment from 'moment';
 import './UsersList.css';
-
-import UserEditModal from './UserEditModal'
-
+import UserModal from './userModal'
 
 const { Column } = Table;
 const FormItem = Form.Item;
+
 class UsersList extends Component {
 	constructor(props) {
 	    super(props);
@@ -32,10 +30,12 @@ class UsersList extends Component {
 	    	dataPerPage: 15,
 	    	// 当前页码
 	    	dataPage: 1,
-	    	// 编辑用户弹窗状态
-	    	editUserStatus: false,
+	    	// 修改用户信息时所传的数据
 	    	editingUserData: {},
-	    	arr: []
+	    	// 用户弹窗状态
+	    	modalStatus: false,
+	    	// 弹窗的类型
+	    	modalType: ''
 	    }
 	}
 
@@ -101,51 +101,6 @@ class UsersList extends Component {
 		});
 	}
 
-	// 打开编辑用户信息窗口
-	handleEditUser = (row) => {
-
-		// 重置表单 并且赋初值
-		//this.props.form.resetFields();
-		//this.props.form.setFieldsValue();
-		this.setState({
-			arr: [row.username],
-			editingUserData: {'username': row.username, 'email': row.email,'phone_number': row.phoneNumber, 'realname': row.realname},
-		}, function() {
-			this.formRef.handleEditUser();
-			this.setState({
-				editUserStatus: true
-			})
-		});
-	}
-
-	// 取消编辑用户信息
-	handleCancelEditUser = () => {
-		this.setState({
-			editUserStatus: false
-		});
-	}
-
-	// 提交修改用户信息
-	handleSubmitEditUser = (e) => {
-		e.preventDefault();
-		this.props.form.validateFields((err, values) => {
-			if (!err) {
-				this._editUser();
-			}
-		});
-	}
-
-	// 修改用户信息 接口调用
-	_editUser = () => {
-		let data = this.props.form.getFieldsValue();
-		console.log(data, 'data');
-		message.success('修改用户信息成功！');
-		this.setState({
-			editUserStatus: false
-		});
-		this.getListData();
-	}
-
 	// 表格排序
 	handleChangeTableSort = (pagination, filters, sorter) => {
 		if(sorter) {
@@ -169,20 +124,39 @@ class UsersList extends Component {
 		}
 	}
 
-	render() {
-		const { list, loading, total, dataPerPage, dataPage, editUserStatus, editingUserData, arr } = this.state;
-		const { getFieldDecorator } = this.props.form;
-		// const formItemLayout = {
-		// 	labelCol: {
-		// 		xs: { span: 24},
-		// 		sm: { span: 4},
-		// 	},
-		// 	wrapperCol: {
-		// 		xs: { span: 24},
-		// 		sm: { span: 20},
-		// 	},
-		// }
+	// 打开编辑用户信息窗口
+	handleEditUser = (row) => {
+		// 重置表单 并且赋初值
+		this.setState({
+			editingUserData: {'username': row.username, 'email': row.email,'phone_number': row.phoneNumber, 'realname': row.realname},
+		}, function() {
+			this.formRef.handleEditUser();
+			this.setState({
+				modalStatus: true,
+				modalType: 'edit'
+			})
+		});
+	}
 
+	// 打开新建用户信息窗口
+	handleCreateUser = () => {
+		this.formRef.handleCreateUser();
+		this.setState({
+			modalStatus: true,
+			modalType: 'create' 
+		})
+	}
+
+	// 关闭弹出层
+	handleCancelModal = () => {
+		this.setState({
+			modalStatus: false 
+		})
+	}
+
+	render() {
+		const { list, loading, total, dataPerPage, dataPage, editingUserData, modalType, modalStatus } = this.state;
+		const { getFieldDecorator } = this.props.form;
 		return (
 			<div id="users" className="users">
 				<div className="users__searchContainer">
@@ -197,6 +171,9 @@ class UsersList extends Component {
 						</FormItem>*/}
 						<FormItem>
 							<Button type="primary" icon="search" htmlType="submit">查询</Button>
+						</FormItem>
+						<FormItem>
+							<Button type="primary" icon="plus" onClick={this.handleCreateUser}>新建</Button>
 						</FormItem>
 					</Form>
 				</div>
@@ -217,7 +194,7 @@ class UsersList extends Component {
 					    )}></Column>
 					<Column title="最后登录时间" dataIndex="lastLogin" key="last_login" 
 						render={(last_login, record) => (
-					        <span>{moment(last_login).format('YYYY-MM-DD HH:mm:ss')}</span>
+					        <span>{last_login ? moment(last_login).format('YYYY-MM-DD HH:mm:ss') : ''}</span>
 					    )}></Column>
 					<Column title="创建时间" dataIndex="created_at" key="created_at" sorter={true} 
 						render={(created_at, record) => (
@@ -235,45 +212,27 @@ class UsersList extends Component {
 							</span>
 						)}></Column>
 				</Table>
-				<Pagination showQuickJumper showSizeChanger pageSizeOptions={['15', '30', '100', '200']} showTotal={total => `共 ${total} 条`} pageSize={dataPerPage} current={dataPage} total={total} onChange={this.handleChangePage} onShowSizeChange={this.handleChangePageSize} />
-				<UserEditModal wrappedComponentRef={(editingUserData)=> this.formRef = editingUserData} editUserStatus={editUserStatus} editingUserData={editingUserData} arr={this.state.arr} handleChangeStatus={this.handleCancelEditUser.bind(this)} getListData={this.getListData.bind(this)}></UserEditModal>
-				{/*<Modal title="修改用户信息" visible={editUserStatus} cancelText="取消" okText="确定"
-					onCancel={this.handleCancelEditUser} 
-					onOk={this.handleSubmitEditUser}>
-					<Form>
-						<FormItem {...formItemLayout} label="用户名：">
-							{getFieldDecorator('username', {
-								rules: [{ required: true, message: '请输入用户名！' }],
-							})(
-								<Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="请输入用户名" autoComplete="off" />
-							)}
-						</FormItem>
-						<FormItem {...formItemLayout} label="电子邮箱：">
-							{getFieldDecorator('email', {
-								rules: [{ required: true, message: '请输入电子邮箱！' },
-										{ type:'email', message: '请输入正确的电子邮箱！' }],
-							})(
-								<Input prefix={<Icon type="mail" style={{ fontSize: 13 }} />} placeholder="请输入电子邮箱" autoComplete="off" />
-							)}
-						</FormItem>
-						<FormItem {...formItemLayout} label="手机号码：">
-							{getFieldDecorator('phoneNumber')(
-								<Input prefix={<Icon type="mobile" style={{ fontSize: 13 }} />} placeholder="请输入手机号码" autoComplete="off" />
-							)}
-						</FormItem>
-						<FormItem {...formItemLayout} label="真实姓名：">
-							{getFieldDecorator('realname')(
-								<Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="请输入真实姓名" autoComplete="off" />
-							)}
-						</FormItem>
-					</Form>
-				</Modal>*/}
+				<Pagination 
+					showQuickJumper 
+					showSizeChanger 
+					pageSizeOptions={['15', '30', '100', '200']} 
+					showTotal={total => `共 ${total} 条`} 
+					pageSize={dataPerPage} 
+					current={dataPage} 
+					total={total} 
+					onChange={this.handleChangePage} 
+					onShowSizeChange={this.handleChangePageSize} />
+				<UserModal 
+					modalType={modalType} 
+					modalStatus={modalStatus} 
+					editingUserData={editingUserData} 
+					wrappedComponentRef={(son)=> this.formRef = son}  
+					handleChangeStatus={this.handleCancelModal.bind(this)} 
+					getListData={this.getListData.bind(this)} />
 			</div>
 		);
 	}
 }
-function mapPropsToFields(props) {
-	console.log(props)
-}
-UsersList = Form.create({mapPropsToFields: mapPropsToFields()})(UsersList);
+
+UsersList = Form.create({})(UsersList);
 export default UsersList;

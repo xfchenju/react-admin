@@ -1,5 +1,7 @@
 import { post, get } from './config';
 
+// 
+export const register = params => post('/api/v1/user/register', params);
 // 登录
 export const login = params => post('/api/v1/user/login', params);
 // 注销
