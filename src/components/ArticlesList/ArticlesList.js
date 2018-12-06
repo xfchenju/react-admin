@@ -1,15 +1,14 @@
 import React, { Component } from 'react';
-import { Button, Table, Pagination, Input, Form, message, Popconfirm, Select } from 'antd';
-import { getCategorysList, deleteCategory, isEnableCategory } from '../../http/api';
+import { Button, Table, Pagination, Input, Form, message, Popconfirm, Modal } from 'antd';
+import { getArticlesList, deleteArticle, getArticleDetail } from '../../http/api';
 import moment from 'moment';
 import './ArticlesList.css';
 import ArticleModal from './articleModal'
 
 const { Column } = Table;
 const FormItem = Form.Item;
-const Option = Select.Option;
 
-class CategorysList extends Component {
+class ArticlesList extends Component {
 	constructor(props) {
 	    super(props);
 	    this.state = {
@@ -18,8 +17,8 @@ class CategorysList extends Component {
 	    	list: [],
 	    	// 搜索条件
 	    	searchData: {
-	    		name: '',
-	    		status: '',
+				title: '',
+				author:''
 	    	},
 	    	// 排序规则
 	    	sortData: {
@@ -37,7 +36,9 @@ class CategorysList extends Component {
 	    	// 弹窗状态
 	    	modalStatus: false,
 	    	// 弹窗的类型
-	    	modalType: ''
+			modalType: '',
+			// 详情 弹窗状态
+			detailStatus: false
 	    }
 	}
 
@@ -48,21 +49,21 @@ class CategorysList extends Component {
 	// 获取信息
 	getListData = () => {
 		let data = {
-			name: this.state.searchData.name,
-			status: this.state.searchData.status,
+			title: this.state.searchData.title,
+			author: this.state.searchData.author,
 			fieldName: this.state.sortData.fieldName,
 			sortRule: this.state.sortData.sortRule,
 		};
 		this.setState({
 			loading: true
 		})
-		getCategorysList(data).then((res)=>{
+		getArticlesList(data).then((res)=>{
 			this.setState({
 				loading: false
 			})
 			if(res) {
 				this.setState({
-					list: res.data.data.categorys
+					list: res.data.data.articles
 				});
 			}
 		}).catch(()=>{
@@ -94,12 +95,11 @@ class CategorysList extends Component {
 	// 搜索
 	handleSubmitSearch = (e) => {
 		e.preventDefault();
-		console.log(this.props.form.getFieldValue('searchStatus'), 'asd');
 		this.setState({
 			dataPage: 1,
 			searchData: {
-				name: this.props.form.getFieldValue('searchName'),
-				status: this.props.form.getFieldValue('searchStatus')
+				title: this.props.form.getFieldValue('searchTitle'),
+				author: this.props.form.getFieldValue('searchAuthor'),
 			}
 		}, function() {
 			this.getListData();
@@ -130,11 +130,11 @@ class CategorysList extends Component {
 	}
 
 	// 打开编辑分类窗口
-	handleEditCategory = (row) => {
+	handleEditArticle = (row) => {
 		console.log('rowlist', row)
 		// 重置表单 并且赋初值
 		this.setState({
-			editingData: {'id': row.id, 'name': row.name, 'order': row.order},
+			editingData: {'id': row.id, 'title': row.title, 'content': row.content, 'categoryId': row.categoryId, 'isTop': row.isTop},
 		}, function() {
 			this.formRef.handleEdit();
 			this.setState({
@@ -145,7 +145,7 @@ class CategorysList extends Component {
 	}
 
 	// 打开新建分类窗口
-	handleCreateCategory = () => {
+	handleCreateArticle = () => {
 		this.formRef.handleCreate();
 		this.setState({
 			modalStatus: true,
@@ -161,68 +161,88 @@ class CategorysList extends Component {
 	}
 
 	// 删除分类
-	_deleteCategory = (id) => {
+	_deleteArticle = (id) => {
 		let data = {
 			id: id
 		}
-		deleteCategory(data).then((res)=>{
+		deleteArticle(data).then((res)=>{
 			if(res) {
 				message.success('删除成功!');
 				this.getListData();
 			}
 		});
 	}
-	// 禁用/启用分类
-	_isEnableCategory = (id, status) => {
-		let data = {
-			id: id,
-			status: status
-		}
-		isEnableCategory(data).then((res)=>{
-			if(res) {
-				message.success('操作成功!');
-				this.getListData();
-			}
+
+	// 查看详情
+	handleViewDetail = (id) => {
+		this.setState({
+			detailStatus: true
+		});
+		this._getArticleDetail(id);
+	}
+
+	// 关闭详情的弹窗
+	handleCancelViewDetail = () => {
+		this.setState({
+			detailStatus: false
 		});
 	}
 
+	// 获取文章详情
+	_getArticleDetail = (id) => {
+		let data = {
+			id: id
+		}
+		getArticleDetail(data).then((res)=>{
+			let code = res.data.code;
+			let msg = res.data.msg;
+			if(code === 200) {
+				this.setState({
+					articleDetail: res.data.data.detail
+				});
+				console.log('data', res.data.data.detail);
+			}else {
+				message.error(msg);
+			}
+		})
+	}
+
 	render() {
-		const { list, loading, total, dataPerPage, dataPage, editingData, modalType, modalStatus } = this.state;
+		const { list, loading, total, dataPerPage, dataPage, editingData, modalType, modalStatus, detailStatus, articleDetail } = this.state;
 		const { getFieldDecorator } = this.props.form;
 		return (
 			<div id="users" className="users">
 				<div className="users__searchContainer" style={{ margin: '10px' }}>
 					<Form layout="inline" onSubmit={this.handleSubmitSearch}>
-						<FormItem label="分类名称">
-							{getFieldDecorator('searchName')(
-								<Input placeholder="请输入分类名称" autoComplete="off" />
+						<FormItem label="文章标题">
+							{getFieldDecorator('searchTitle')(
+								<Input placeholder="请输入文章标题" autoComplete="off" />
 							)}
 						</FormItem>
-						<FormItem label="状态">
-							{getFieldDecorator('searchStatus')(
-								<Select style={{ width: 120 }}>
-									<Option value="">全部</Option>
-									<Option value="0">已启用</Option>
-									<Option value="1">已禁用</Option>
-								</Select>
+						<FormItem label="作者">
+							{getFieldDecorator('searchAuthor')(
+								<Input placeholder="请输入作者" autoComplete="off" />
 							)}
 						</FormItem>
 						<FormItem>
 							<Button type="primary" icon="search" htmlType="submit">查询</Button>
 						</FormItem>
 						<FormItem>
-							<Button type="primary" icon="plus" onClick={this.handleCreateCategory}>新建</Button>
+							<Button type="primary" icon="plus" onClick={this.handleCreateArticle}>新建</Button>
 						</FormItem>
 					</Form>
 				</div>
 				<Table dataSource={list} rowKey="id" loading={loading} pagination={false} onChange={this.handleChangeTableSort}>
-					<Column title="ID" dataIndex="id" key="id"></Column>
-					<Column title="名称" dataIndex="name" key="name"></Column>
-					<Column title="排序" dataIndex="order" key="order" sorter={true}></Column>
-					<Column title="状态" dataIndex="status" key="status" 
-						render={(status) => (
-					        <span>{status === 0 ? '启用' : '禁用'}</span>
+					<Column title="ID" dataIndex="id" key="id" />>
+					<Column title="文章标题" dataIndex="title" key="title" />
+					<Column title="作者" dataIndex="author" key="author" />
+					<Column title="点击量" dataIndex="viewCount" key="view_count" sorter={true} />
+					<Column title="分类名" dataIndex="category" key="category" />
+					<Column title="是否置顶" dataIndex="isTop" key="is_top" 
+						render={(isTop) => (
+					        <span>{isTop ? '是' : '否'}</span>
 					    )} />
+					<Column title="文章状态" dataIndex="articleStatus" key="article_status" />
 					<Column title="创建时间" dataIndex="created_at" key="created_at" sorter={true} 
 						render={(created_at, record) => (
 					        <span>{moment(created_at).format('YYYY-MM-DD HH:mm:ss')}</span>
@@ -234,17 +254,13 @@ class CategorysList extends Component {
 					<Column title="操作" key="operation" 
 						render={(text, record) => (
 							<span>
-								<Button onClick={this.handleEditCategory.bind(this, record)} type="primary" size="small" icon="edit">修改</Button>
-								{record.status === 0 ? (
-									<Button style={{ marginLeft: '5px' }} onClick={this._isEnableCategory.bind(this, record.id, 1)} type="danger" size="small" icon="stop">禁用</Button>
-								) : (
-									<Button style={{ marginLeft: '5px' }} onClick={this._isEnableCategory.bind(this, record.id, 0)} type="primary" size="small" icon="play-circle-o">启用</Button>
-								)}
-								<Popconfirm title="您确定要删除吗？" onConfirm={this._deleteCategory.bind(this, record.id)} okText="是的" cancelText="取消" placement="bottomRight">
+								<Button onClick={this.handleViewDetail.bind(this, record.id)} type="primary" size="small" icon="file-text">查看</Button>
+								<Button style={{ marginLeft: '5px' }} onClick={this.handleEditArticle.bind(this, record)} type="primary" size="small" icon="edit">修改</Button>
+								<Popconfirm title="您确定要删除吗？" onConfirm={this._deleteArticle.bind(this, record.id)} okText="是的" cancelText="取消" placement="bottomRight">
 								  <Button style={{ marginLeft: '5px' }} type="danger" icon="delete" size="small">删除</Button>
 								</Popconfirm>
 							</span>
-						)}></Column>
+						)} />
 				</Table>
 				<Pagination 
 					showQuickJumper 
@@ -256,17 +272,30 @@ class CategorysList extends Component {
 					total={total} 
 					onChange={this.handleChangePage} 
 					onShowSizeChange={this.handleChangePageSize} />
-				<CategoryModal 
+				<ArticleModal 
 					modalType={modalType} 
 					modalStatus={modalStatus} 
 					editingData={editingData} 
 					wrappedComponentRef={(son)=> this.formRef = son}  
 					handleChangeStatus={this.handleCancelModal.bind(this)} 
 					getListData={this.getListData.bind(this)} />
+				<Modal title="文章详情" visible={detailStatus} footer={null}
+					onCancel={this.handleCancelViewDetail}>
+					{articleDetail ? (
+							<div>
+								<span>标题：{articleDetail.title}</span><br/>
+								<span>创建时间：{articleDetail.created_at}</span><br/>
+								<span>分类名：{articleDetail.category}</span><br/>
+								<span>是否置顶：{articleDetail.isTop ? '置顶' : '不置顶'}</span><br/>
+								<span>点击数：{articleDetail.viewCount}</span><br/>
+								<span>内容：{articleDetail.content}</span>
+							</div>
+						) : ''}
+				</Modal>
 			</div>
 		);
 	}
 }
 
-CategorysList = Form.create({})(CategorysList);
-export default CategorysList;
+ArticlesList = Form.create({})(ArticlesList);
+export default ArticlesList;

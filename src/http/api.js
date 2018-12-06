@@ -16,10 +16,12 @@ export const editUser = params => post('/api/v1/user/update-user', params);
 // 删除用户
 export const deleteUser = params => post('/api/v1/user/delete-user', params);
 /**
- * 
+ * 分类相关
  */
 // 获取分类列表
 export const getCategorysList = params => get('/api/v1/category/get-categorys-list', params);
+// 获取启用的分类
+export const getActiveCategorys = params => get('/api/v1/category/get-active-categorys', params);
 // 新增分类
 export const createCategory = params => post('/api/v1/category/create-category', params);
 // 修改分类
@@ -28,6 +30,20 @@ export const updateCategory = params => post('/api/v1/category/update-category',
 export const isEnableCategory = params => post('/api/v1/category/isenable-category', params);
 // 删除分类分类相关
 export const deleteCategory = params => post('/api/v1/category/delete-category', params);
+
+/**
+ * 文章相关
+ */
+// 获取文章列表
+export const getArticlesList = params => get('/api/v1/article/get-articles-list', params);
+// 获取文章详情
+export const getArticleDetail = params => get('/api/v1/article/get-article-detail', params);
+// 新增文章
+export const createArticle = params => post('/api/v1/article/create-article', params);
+// 修改文章
+export const updateArticle = params => post('/api/v1/article/update-article', params);
+// 删除文章
+export const deleteArticle = params => post('/api/v1/article/delete-article', params);
 
 
 // /*通用*/

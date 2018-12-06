@@ -43,6 +43,11 @@ class CategorysList extends Component {
 
 	componentWillMount() {
 		this.getListData();
+		
+	}
+	
+	componentDidMount() {
+		this.props.form.setFieldsValue({'searchStatus': ''})
 	}
 
 	// 获取信息

@@ -10,6 +10,7 @@ import Table from '../Table/Table';
 import Form from '../Form/Form';
 import UsersList from '../UsersList/UsersList';
 import CategorysList from '../CategorysList/CategorysList';
+import ArticlesList from '../ArticlesList/ArticlesList';
 import Setting from '../Setting/Setting';
 import ChangePwd from '../ChangePwd/ChangePwd';
 import Demo from '../Demo/Demo';
@@ -38,6 +39,12 @@ const routerArr = [
     'key': 3,
     'name': '分类管理',
     'path': '/app/categorys-list',
+    'icon': 'user'
+  },
+  {
+    'key': 13,
+    'name': '文章管理',
+    'path': '/app/articles-list',
     'icon': 'user'
   },
   {
@@ -178,19 +185,18 @@ export default class App extends Component {
   componentWillMount() {
     // 获取用户信息
     let user = JSON.parse(localStorage.getItem('user'));
-    this.setState({
-      user: user.username
-    }, function() {
-      console.log(this.state.user)
-    });
-
+    if(user) {
+      this.setState({
+        user: user.username
+      }, function() {
+        console.log(this.state.user)
+      });
+    }else {
+      this.props.history.push('/login');
+    }
   }
 
   render() {
-    if (localStorage.getItem("user") === null) {
-      this.props.history.push('/login');
-    } else {
-    }
     // 导航栏元素
     const MenuItems = routerArr.map(item => {
       if(item['children']){
@@ -236,7 +242,7 @@ export default class App extends Component {
               <div className="header__userContainer">
                 <div className="header__userName">欢迎您，{this.state.user}</div>
                 <div className="header__userAvatorWrap">
-                  <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSGTVf63Vm3XgOncMVSOy0-jSxdMT8KVJIc8WiWaevuWiPGe0Pm" alt=""/>
+                  <img src="http://img2.touxiang.cn/file/20180306/1480df1654a971fd96385bb099cad7db.jpg" alt=""/>
                 </div>
                 <Popconfirm className="header__logout" title="您确定要注销吗？" onConfirm={this._logout} okText="是的" cancelText="取消" placement="bottomRight">
                   <Button >注销</Button>
@@ -248,6 +254,7 @@ export default class App extends Component {
                 <Route exact path="/app" component={Home}/>  
                 <Route path="/app/users-list" component={UsersList}/>  
                 <Route path="/app/categorys-list" component={CategorysList}/>  
+                <Route path="/app/articles-list" component={ArticlesList}/>  
                 <Route path="/app/help" component={Help}/>  
                 <Route path="/app/about" component={About}/>  
                 <Route path="/app/table" component={Table}/>  

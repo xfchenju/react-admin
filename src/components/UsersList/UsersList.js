@@ -196,7 +196,7 @@ class UsersList extends Component {
 					<Column title="头像" dataIndex="avator" key="avator"
 						render={(avator, record)=>(
 							<div className="list-avator">
-								<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSGTVf63Vm3XgOncMVSOy0-jSxdMT8KVJIc8WiWaevuWiPGe0Pm" key={record.id} alt="" />
+								<img src="http://img2.touxiang.cn/file/20180306/1480df1654a971fd96385bb099cad7db.jpg" key={record.id} alt="" />
 							</div>
 						)}></Column>
 					<Column title="用户名" dataIndex="username" key="username"></Column>
