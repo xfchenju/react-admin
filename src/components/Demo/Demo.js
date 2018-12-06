@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Form, Input, Select, Button } from 'antd';
+import { Form, Input, Select, Button, Upload, message, Icon } from 'antd';
+import './demo.css';
 const FormItem = Form.Item;
 const Option = Select.Option;
 
@@ -69,6 +70,26 @@ class PriceInput extends Component {
   }
 }
 
+function getBase64(img, callback) {
+  const reader = new FileReader();
+  reader.addEventListener('load', () => callback(reader.result));
+  reader.readAsDataURL(img);
+
+  console.log('reader', reader);
+}
+
+function beforeUpload(file) {
+  const isJPG = file.type === 'image/jpeg';
+  if (!isJPG) {
+    message.error('You can only upload JPG file!');
+  }
+  const isLt2M = file.size / 1024 / 1024 < 2;
+  if (!isLt2M) {
+    message.error('Image must smaller than 2MB!');
+  }
+  return isJPG && isLt2M;
+}
+
 class Demo extends Component {
   handleSubmit = (e) => {
     e.preventDefault();
@@ -85,8 +106,33 @@ class Demo extends Component {
     }
     callback('Price must greater than zero!');
   }
+
+  state = {};
+
+  handleChange = (info) => {
+    if (info.file.status === 'done') {
+      console.log(info.file)
+      // Get this url from response in real world.
+      getBase64(info.file.originFileObj, imageUrl => this.setState({ imageUrl }));
+    }
+  }
   render() {
+    const imageUrl = this.state.imageUrl;
     const { getFieldDecorator } = this.props.form;
+    const props = {
+      name: 'file',
+      action: 'http://localhost:3002/api/v1/currency/upload',
+      onChange(info) {
+        if (info.file.status !== 'uploading') {
+          console.log(info.file, info.fileList);
+        }
+        if (info.file.status === 'done') {
+          message.success(`${info.file.name} file uploaded successfully`);
+        } else if (info.file.status === 'error') {
+          message.error(`${info.file.name} file upload failed.`);
+        }
+      },
+    };
     return (
       <Form layout="inline" onSubmit={this.handleSubmit}>
         <FormItem label="Price">
@@ -95,9 +141,30 @@ class Demo extends Component {
             rules: [{ validator: this.checkPrice }],
           })(<PriceInput />)}
         </FormItem>
+        <FormItem label="头像">
+          <Upload {...props}>
+            <Button>
+              <Icon type="upload" /> Click to Upload
+            </Button>
+          </Upload>
+        </FormItem>
         <FormItem>
           <Button type="primary" htmlType="submit">Submit</Button>
         </FormItem>
+        <Upload
+          className="avatar-uploader"
+          name="file"
+          showUploadList={false}
+          action="http://localhost:3002/api/v1/currency/upload"
+          beforeUpload={beforeUpload}
+          onChange={this.handleChange}
+        >
+          {
+            imageUrl ?
+              <img src={imageUrl} alt="" className="avatar" /> :
+              <Icon type="plus" className="avatar-uploader-trigger" />
+          }
+        </Upload>
       </Form>
     );
   }

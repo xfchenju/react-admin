@@ -1,13 +1,33 @@
 import { post, get } from './config';
 
-// 
+/**
+ * 用户相关
+ */
+// 注册
 export const register = params => post('/api/v1/user/register', params);
 // 登录
 export const login = params => post('/api/v1/user/login', params);
 // 注销
 export const logout = params => post('/api/v1/user/logout', params);
-// 获取所有用户
+// 获取用户列表
 export const getUsersList = params => get('/api/v1/user/get-users-list', params);
+// 修改用户信息
+export const editUser = params => post('/api/v1/user/update-user', params);
+// 删除用户
+export const deleteUser = params => post('/api/v1/user/delete-user', params);
+/**
+ * 
+ */
+// 获取分类列表
+export const getCategorysList = params => get('/api/v1/category/get-categorys-list', params);
+// 新增分类
+export const createCategory = params => post('/api/v1/category/create-category', params);
+// 修改分类
+export const updateCategory = params => post('/api/v1/category/update-category', params);
+// 禁用/启用分类
+export const isEnableCategory = params => post('/api/v1/category/isenable-category', params);
+// 删除分类分类相关
+export const deleteCategory = params => post('/api/v1/category/delete-category', params);
 
 
 // /*通用*/

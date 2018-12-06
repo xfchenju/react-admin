@@ -1,23 +1,25 @@
 import React, { Component } from 'react';
-import { Button, Table, Pagination, Input, Form, message, Popconfirm } from 'antd';
-import { getUsersList, deleteUser } from '../../http/api';
+import { Button, Table, Pagination, Input, Form, message, Popconfirm, Select } from 'antd';
+import { getCategorysList, deleteCategory, isEnableCategory } from '../../http/api';
 import moment from 'moment';
-import './UsersList.css';
-import UserModal from './userModal'
+import './CategorysList.css';
+import CategoryModal from './categoryModal'
 
 const { Column } = Table;
 const FormItem = Form.Item;
+const Option = Select.Option;
 
-class UsersList extends Component {
+class CategorysList extends Component {
 	constructor(props) {
 	    super(props);
 	    this.state = {
 	    	loading: false,
-	    	// 用户列表数据
+	    	// 列表数据
 	    	list: [],
 	    	// 搜索条件
 	    	searchData: {
-	    		username: ''
+	    		name: '',
+	    		status: '',
 	    	},
 	    	// 排序规则
 	    	sortData: {
@@ -30,9 +32,9 @@ class UsersList extends Component {
 	    	dataPerPage: 15,
 	    	// 当前页码
 	    	dataPage: 1,
-	    	// 修改用户信息时所传的数据
-	    	editingUserData: {},
-	    	// 用户弹窗状态
+	    	// 修改时所传的数据
+	    	editingData: {},
+	    	// 弹窗状态
 	    	modalStatus: false,
 	    	// 弹窗的类型
 	    	modalType: ''
@@ -43,23 +45,24 @@ class UsersList extends Component {
 		this.getListData();
 	}
 
-	// 获取用户信息
+	// 获取信息
 	getListData = () => {
 		let data = {
-			username: this.state.searchData.username,
+			name: this.state.searchData.name,
+			status: this.state.searchData.status,
 			fieldName: this.state.sortData.fieldName,
 			sortRule: this.state.sortData.sortRule,
 		};
 		this.setState({
 			loading: true
 		})
-		getUsersList(data).then((res)=>{
+		getCategorysList(data).then((res)=>{
 			this.setState({
 				loading: false
 			})
 			if(res) {
 				this.setState({
-					list: res.data.data.users
+					list: res.data.data.categorys
 				});
 			}
 		}).catch(()=>{
@@ -91,10 +94,12 @@ class UsersList extends Component {
 	// 搜索
 	handleSubmitSearch = (e) => {
 		e.preventDefault();
+		console.log(this.props.form.getFieldValue('searchStatus'), 'asd');
 		this.setState({
 			dataPage: 1,
 			searchData: {
-				username: this.props.form.getFieldValue('searchUsername')
+				name: this.props.form.getFieldValue('searchName'),
+				status: this.props.form.getFieldValue('searchStatus')
 			}
 		}, function() {
 			this.getListData();
@@ -124,14 +129,14 @@ class UsersList extends Component {
 		}
 	}
 
-	// 打开编辑用户信息窗口
-	handleEditUser = (row) => {
+	// 打开编辑分类窗口
+	handleEditCategory = (row) => {
 		console.log('rowlist', row)
 		// 重置表单 并且赋初值
 		this.setState({
-			editingUserData: {'id': row.id, 'avator': row.avator, 'username': row.username, 'email': row.email,'phone_number': row.phoneNumber, 'realname': row.realname, 'is_admin': row.isAdmin},
+			editingData: {'id': row.id, 'name': row.name, 'order': row.order},
 		}, function() {
-			this.formRef.handleEditUser();
+			this.formRef.handleEdit();
 			this.setState({
 				modalStatus: true,
 				modalType: 'edit'
@@ -139,9 +144,9 @@ class UsersList extends Component {
 		});
 	}
 
-	// 打开新建用户信息窗口
-	handleCreateUser = () => {
-		this.formRef.handleCreateUser();
+	// 打开新建分类窗口
+	handleCreateCategory = () => {
+		this.formRef.handleCreate();
 		this.setState({
 			modalStatus: true,
 			modalType: 'create' 
@@ -155,66 +160,69 @@ class UsersList extends Component {
 		})
 	}
 
-	// 删除用户
-	_deleteUser = (id) => {
+	// 删除分类
+	_deleteCategory = (id) => {
 		let data = {
 			id: id
 		}
-		deleteUser(data).then((res)=>{
+		deleteCategory(data).then((res)=>{
 			if(res) {
 				message.success('删除成功!');
 				this.getListData();
 			}
 		});
 	}
+	// 禁用/启用分类
+	_isEnableCategory = (id, status) => {
+		let data = {
+			id: id,
+			status: status
+		}
+		isEnableCategory(data).then((res)=>{
+			if(res) {
+				message.success('操作成功!');
+				this.getListData();
+			}
+		});
+	}
 
 	render() {
-		const { list, loading, total, dataPerPage, dataPage, editingUserData, modalType, modalStatus } = this.state;
+		const { list, loading, total, dataPerPage, dataPage, editingData, modalType, modalStatus } = this.state;
 		const { getFieldDecorator } = this.props.form;
 		return (
 			<div id="users" className="users">
 				<div className="users__searchContainer" style={{ margin: '10px' }}>
 					<Form layout="inline" onSubmit={this.handleSubmitSearch}>
-						<FormItem label="用户名">
-							{getFieldDecorator('searchUsername')(
-								<Input placeholder="请输入用户名" autoComplete="off" />
+						<FormItem label="分类名称">
+							{getFieldDecorator('searchName')(
+								<Input placeholder="请输入分类名称" autoComplete="off" />
 							)}
 						</FormItem>
-						{/*<FormItem label="用户创建日期">
-							<RangePicker locale={locale} showTime format="YYYY-MM-DD HH:mm:ss" placeholder={['开始时间', '结束时间']}  onChange={this.handleChangeSearchDataCreatedAt} />
-						</FormItem>*/}
+						<FormItem label="状态">
+							{getFieldDecorator('searchStatus')(
+								<Select style={{ width: 120 }}>
+									<Option value="">全部</Option>
+									<Option value="0">已启用</Option>
+									<Option value="1">已禁用</Option>
+								</Select>
+							)}
+						</FormItem>
 						<FormItem>
 							<Button type="primary" icon="search" htmlType="submit">查询</Button>
 						</FormItem>
 						<FormItem>
-							<Button type="primary" icon="plus" onClick={this.handleCreateUser}>新建</Button>
+							<Button type="primary" icon="plus" onClick={this.handleCreateCategory}>新建</Button>
 						</FormItem>
 					</Form>
 				</div>
 				<Table dataSource={list} rowKey="id" loading={loading} pagination={false} onChange={this.handleChangeTableSort}>
 					<Column title="ID" dataIndex="id" key="id"></Column>
-					<Column title="头像" dataIndex="avator" key="avator"
-						render={(avator, record)=>(
-							<div className="list-avator">
-								<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSGTVf63Vm3XgOncMVSOy0-jSxdMT8KVJIc8WiWaevuWiPGe0Pm" key={record.id} alt="" />
-							</div>
-						)}></Column>
-					<Column title="用户名" dataIndex="username" key="username"></Column>
-					<Column title="电子邮箱" dataIndex="email" key="email"></Column>
-					<Column title="手机号码" dataIndex="phoneNumber" key="phone_number"></Column>
-					<Column title="真实姓名" dataIndex="realname" key="realname"></Column>
-					<Column title="用户状态" dataIndex="userStatus" key="user_status" 
-						render={(user_status, record) => (
-					        <span>{user_status}</span>
-					    )}></Column>
-					<Column title="是否管理员" dataIndex="isAdmin" key="is_admin" 
-						render={(is_admin, record) => (
-					        <span>{is_admin ? '是' : '否'}</span>
-					    )}></Column>
-					<Column title="最后登录时间" dataIndex="lastLogin" key="last_login" 
-						render={(last_login, record) => (
-					        <span>{last_login ? moment(last_login).format('YYYY-MM-DD HH:mm:ss') : ''}</span>
-					    )}></Column>
+					<Column title="名称" dataIndex="name" key="name"></Column>
+					<Column title="排序" dataIndex="order" key="order" sorter={true}></Column>
+					<Column title="状态" dataIndex="status" key="status" 
+						render={(status) => (
+					        <span>{status === 0 ? '启用' : '禁用'}</span>
+					    )} />
 					<Column title="创建时间" dataIndex="created_at" key="created_at" sorter={true} 
 						render={(created_at, record) => (
 					        <span>{moment(created_at).format('YYYY-MM-DD HH:mm:ss')}</span>
@@ -226,8 +234,13 @@ class UsersList extends Component {
 					<Column title="操作" key="operation" 
 						render={(text, record) => (
 							<span>
-								<Button onClick={this.handleEditUser.bind(this, record)} type="primary" size="small" icon="edit">修改</Button>
-								<Popconfirm title="您确定要删除吗？" onConfirm={this._deleteUser.bind(this, record.id)} okText="是的" cancelText="取消" placement="bottomRight">
+								<Button onClick={this.handleEditCategory.bind(this, record)} type="primary" size="small" icon="edit">修改</Button>
+								{record.status === 0 ? (
+									<Button style={{ marginLeft: '5px' }} onClick={this._isEnableCategory.bind(this, record.id, 1)} type="danger" size="small" icon="stop">禁用</Button>
+								) : (
+									<Button style={{ marginLeft: '5px' }} onClick={this._isEnableCategory.bind(this, record.id, 0)} type="primary" size="small" icon="play-circle-o">启用</Button>
+								)}
+								<Popconfirm title="您确定要删除吗？" onConfirm={this._deleteCategory.bind(this, record.id)} okText="是的" cancelText="取消" placement="bottomRight">
 								  <Button style={{ marginLeft: '5px' }} type="danger" icon="delete" size="small">删除</Button>
 								</Popconfirm>
 							</span>
@@ -243,10 +256,10 @@ class UsersList extends Component {
 					total={total} 
 					onChange={this.handleChangePage} 
 					onShowSizeChange={this.handleChangePageSize} />
-				<UserModal 
+				<CategoryModal 
 					modalType={modalType} 
 					modalStatus={modalStatus} 
-					editingUserData={editingUserData} 
+					editingData={editingData} 
 					wrappedComponentRef={(son)=> this.formRef = son}  
 					handleChangeStatus={this.handleCancelModal.bind(this)} 
 					getListData={this.getListData.bind(this)} />
@@ -255,5 +268,5 @@ class UsersList extends Component {
 	}
 }
 
-UsersList = Form.create({})(UsersList);
-export default UsersList;
+CategorysList = Form.create({})(CategorysList);
+export default CategorysList;

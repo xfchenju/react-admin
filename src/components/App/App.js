@@ -9,6 +9,7 @@ import About from '../About/About';
 import Table from '../Table/Table';
 import Form from '../Form/Form';
 import UsersList from '../UsersList/UsersList';
+import CategorysList from '../CategorysList/CategorysList';
 import Setting from '../Setting/Setting';
 import ChangePwd from '../ChangePwd/ChangePwd';
 import Demo from '../Demo/Demo';
@@ -32,27 +33,33 @@ const routerArr = [
     'name': '用户管理',
     'path': '/app/users-list',
     'icon': 'user'
-  },,
+  },
   {
     'key': 3,
+    'name': '分类管理',
+    'path': '/app/categorys-list',
+    'icon': 'user'
+  },
+  {
+    'key': 4,
     'name': '表格',
     'path': '/app/table',
     'icon': 'table'
   },
   {
-    'key': 4,
+    'key': 5,
     'name': '表单',
     'path': '/app/form',
     'icon': 'form'
   },
   {
-    'key': 5,
+    'key': 6,
     'name': '关于',
     'path': '/app/about',
     'icon': 'home',
     'children': [
       {
-        'key': 6,
+        'key': 7,
         'name': '帮助',
         'path': '/app/help',
         'icon': 'home'
@@ -60,18 +67,18 @@ const routerArr = [
     ]
   },
   {
-    'key': 7,
+    'key': 8,
     'name': '设置',
     'icon': 'setting',
     'children': [
       {
-        'key': 8,
+        'key': 9,
         'name': '个人设置',
         'path': '/app/setting',
         'icon': 'user'
       },
       {
-        'key': 9,
+        'key': 10,
         'name': '修改密码',
         'path': '/app/changePwd',
         'icon': 'lock'
@@ -79,13 +86,13 @@ const routerArr = [
     ]
   },
   {
-    'key': 10,
+    'key': 11,
     'name': '404',
     'path': '/app/404',
     'icon': 'smile'
   },
   {
-    'key': 11,
+    'key': 12,
     'name': 'demo',
     'path': '/app/demo',
     'icon': 'smile'
@@ -101,7 +108,9 @@ export default class App extends Component {
         // 导航栏选中的item
         selectedKey: [''],
         // 导航栏打开的栏目
-        openKey: null
+        openKey: null,
+        // 用户信息
+        user: {}
     }
   }
 
@@ -145,6 +154,7 @@ export default class App extends Component {
       message.error('异常错误');
     })
   }
+
   componentDidMount() {
     // 当前路由
     // let thisRouter = this.props.location.pathname;
@@ -164,6 +174,18 @@ export default class App extends Component {
     //   localStorage.setItem('menu-collapsed', false)
     // }
   }
+
+  componentWillMount() {
+    // 获取用户信息
+    let user = JSON.parse(localStorage.getItem('user'));
+    this.setState({
+      user: user.username
+    }, function() {
+      console.log(this.state.user)
+    });
+
+  }
+
   render() {
     if (localStorage.getItem("user") === null) {
       this.props.history.push('/login');
@@ -211,14 +233,21 @@ export default class App extends Component {
           <Layout>
             <Header style={{ background: '#fff', padding: 0}}>
               <Icon className="trigger" type={this.state.collapsed ? 'menu-unfold' : 'menu-fold'} onClick={this.toggle} />
-              <Popconfirm title="您确定要注销吗？" onConfirm={this._logout} okText="是的" cancelText="取消">
-                <Button >注销</Button>
-              </Popconfirm>
+              <div className="header__userContainer">
+                <div className="header__userName">欢迎您，{this.state.user}</div>
+                <div className="header__userAvatorWrap">
+                  <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSGTVf63Vm3XgOncMVSOy0-jSxdMT8KVJIc8WiWaevuWiPGe0Pm" alt=""/>
+                </div>
+                <Popconfirm className="header__logout" title="您确定要注销吗？" onConfirm={this._logout} okText="是的" cancelText="取消" placement="bottomRight">
+                  <Button >注销</Button>
+                </Popconfirm>
+              </div>
             </Header>
             <Content style={{ overflowY: 'auto'}}>
               <Switch> 
                 <Route exact path="/app" component={Home}/>  
                 <Route path="/app/users-list" component={UsersList}/>  
+                <Route path="/app/categorys-list" component={CategorysList}/>  
                 <Route path="/app/help" component={Help}/>  
                 <Route path="/app/about" component={About}/>  
                 <Route path="/app/table" component={Table}/>  
