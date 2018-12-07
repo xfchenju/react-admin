@@ -15,6 +15,10 @@ export const getUsersList = params => get('/api/v1/user/get-users-list', params)
 export const editUser = params => post('/api/v1/user/update-user', params);
 // 删除用户
 export const deleteUser = params => post('/api/v1/user/delete-user', params);
+// 修改密码
+export const changePassword = params => post('/api/v1/user/change-password', params);
+// 获取用户详情
+export const getUserDetail = params => post('/api/v1/user/get-user-detail', params);
 /**
  * 分类相关
  */

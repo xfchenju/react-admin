@@ -4,16 +4,11 @@ import { Layout, Menu, Icon, Button, Popconfirm, message  } from 'antd';
 import './App.css';
 
 import Home from '../Home/Home';
-import Help from '../Help/Help';
-import About from '../About/About';
-import Table from '../Table/Table';
-import Form from '../Form/Form';
 import UsersList from '../UsersList/UsersList';
 import CategorysList from '../CategorysList/CategorysList';
 import ArticlesList from '../ArticlesList/ArticlesList';
-import Setting from '../Setting/Setting';
+//import Setting from '../Setting/Setting';
 import ChangePwd from '../ChangePwd/ChangePwd';
-import Demo from '../Demo/Demo';
 import NoMatch from '../common/404';
 
 import { logout } from '../../http/api'
@@ -47,43 +42,29 @@ const routerArr = [
     'path': '/app/articles-list',
     'icon': 'user'
   },
-  {
-    'key': 4,
-    'name': '表格',
-    'path': '/app/table',
-    'icon': 'table'
-  },
-  {
-    'key': 5,
-    'name': '表单',
-    'path': '/app/form',
-    'icon': 'form'
-  },
-  {
-    'key': 6,
-    'name': '关于',
-    'path': '/app/about',
-    'icon': 'home',
-    'children': [
-      {
-        'key': 7,
-        'name': '帮助',
-        'path': '/app/help',
-        'icon': 'home'
-      },
-    ]
-  },
+  // {
+  //   'key': 6,
+  //   'name': '关于',
+  //   'path': '/app/about',
+  //   'icon': 'home',
+  // },
+  // {
+  //   'key': 7,
+  //   'name': '帮助',
+  //   'path': '/app/help',
+  //   'icon': 'home'
+  // },
   {
     'key': 8,
     'name': '设置',
     'icon': 'setting',
     'children': [
-      {
-        'key': 9,
-        'name': '个人设置',
-        'path': '/app/setting',
-        'icon': 'user'
-      },
+      // {
+      //   'key': 9,
+      //   'name': '个人设置',
+      //   'path': '/app/setting',
+      //   'icon': 'user'
+      // },
       {
         'key': 10,
         'name': '修改密码',
@@ -91,19 +72,7 @@ const routerArr = [
         'icon': 'lock'
       },
     ]
-  },
-  {
-    'key': 11,
-    'name': '404',
-    'path': '/app/404',
-    'icon': 'smile'
-  },
-  {
-    'key': 12,
-    'name': 'demo',
-    'path': '/app/demo',
-    'icon': 'smile'
-  },
+  }
 ]
 
 export default class App extends Component {
@@ -152,7 +121,7 @@ export default class App extends Component {
         localStorage.clear();
         message.success('注销成功!');
         setTimeout(()=>{
-          this.props.history.push('/');
+          this.props.history.push('/login');
         }, 300);
       }else {
         message.error(msg);
@@ -183,15 +152,13 @@ export default class App extends Component {
   }
 
   componentWillMount() {
-    // 获取用户信息
-    let user = JSON.parse(localStorage.getItem('user'));
+    //获取用户信息
+    let user = localStorage.getItem('user');
     if(user) {
       this.setState({
-        user: user.username
-      }, function() {
-        console.log(this.state.user)
+        user: JSON.parse(user)
       });
-    }else {
+    }else {  
       this.props.history.push('/login');
     }
   }
@@ -240,7 +207,7 @@ export default class App extends Component {
             <Header style={{ background: '#fff', padding: 0}}>
               <Icon className="trigger" type={this.state.collapsed ? 'menu-unfold' : 'menu-fold'} onClick={this.toggle} />
               <div className="header__userContainer">
-                <div className="header__userName">欢迎您，{this.state.user}</div>
+                <div className="header__userName">欢迎您，{this.state.user.username}</div>
                 <div className="header__userAvatorWrap">
                   <img src="http://img2.touxiang.cn/file/20180306/1480df1654a971fd96385bb099cad7db.jpg" alt=""/>
                 </div>
@@ -254,14 +221,9 @@ export default class App extends Component {
                 <Route exact path="/app" component={Home}/>  
                 <Route path="/app/users-list" component={UsersList}/>  
                 <Route path="/app/categorys-list" component={CategorysList}/>  
-                <Route path="/app/articles-list" component={ArticlesList}/>  
-                <Route path="/app/help" component={Help}/>  
-                <Route path="/app/about" component={About}/>  
-                <Route path="/app/table" component={Table}/>  
-                <Route path="/app/form" component={Form}/>  
-                <Route path="/app/setting" component={Setting}/>  
-                <Route path="/app/changePwd" component={ChangePwd}/>  
-                <Route path="/app/demo" component={Demo}/>  
+                <Route path="/app/articles-list" component={ArticlesList}/>   
+                {/*<Route path="/app/setting" component={Setting}/>*/}
+                <Route path="/app/changePwd" component={ChangePwd}/>
                 <Route component={NoMatch}/> 
               </Switch>
             </Content>

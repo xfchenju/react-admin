@@ -1,17 +1,33 @@
 import React, { Component } from 'react';
-import { Form, Icon, Input, Button, Message } from 'antd';
+import { Form, Icon, Input, Button, message } from 'antd';
+import { changePassword } from '../../http/api.js';
 
 const FormItem = Form.Item;
 
 class ChangePwd extends Component {
 	handleSubmit = (e) => {
-		console.log(e, 'e')
 		e.preventDefault();
 		this.props.form.validateFields((err, values) => {
-			console.log(values, 'values')
 			if(!err) {
-				console.log('values of form: ', values);
-				Message.success('提交成功!');
+				let id = JSON.parse(localStorage.getItem('user')).id;
+				Object.assign(values, {id: id});
+				this._changePassword(values);
+			}
+		})
+	}
+
+	// 修改密码
+	_changePassword = (data) => {
+		changePassword(data).then((res)=>{
+			if(res) {
+				let code = res.data.code;
+				let msg = res.data.msg;
+				if(code === 200) {
+					message.success('密码修改成功！');
+					this.props.form.resetFields();
+				}else {
+					message.error(msg);
+				}
 			}
 		})
 	}
@@ -61,7 +77,6 @@ class ChangePwd extends Component {
 				}else {
 					this.props.form.setFields({'newPassword': {value: newPassword, errors: null }});
 				}
-				
 			}
 		}
 		callback();
