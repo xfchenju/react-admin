@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Table, Pagination, Input, Form, message, Popconfirm, Modal } from 'antd';
+import { Button, Table, Pagination, Input, Form, message, Popconfirm, Modal, Tag } from 'antd';
 import { getArticlesList, deleteArticle, getArticleDetail } from '../../http/api';
 import moment from 'moment';
 import './ArticlesList.css';
@@ -288,6 +288,9 @@ class ArticlesList extends Component {
 								<span>分类名：{articleDetail.category}</span><br/>
 								<span>是否置顶：{articleDetail.isTop ? '置顶' : '不置顶'}</span><br/>
 								<span>点击数：{articleDetail.viewCount}</span><br/>
+								<span>标签：{articleDetail.tags ? JSON.parse(articleDetail.tags).map((item, index) => {
+									return <Tag key={index}>{item}</Tag>
+								}) : '无'}</span><br/>
 								<span>内容：{articleDetail.content}</span>
 							</div>
 						) : ''}

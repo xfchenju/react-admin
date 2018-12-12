@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import './articleCreate.css';
 import { Breadcrumb, Form, Icon, Input, message, Select, Button, Switch } from 'antd';
 import { Link } from 'react-router-dom';
-import { createArticle, getActiveCategorys } from '../../http/api';
+import { createArticle, getActiveCategorys, getTags } from '../../http/api';
 import marked from 'marked';
 import highlight from 'highlight.js';
 import 'highlight.js/styles/github.css'
@@ -34,11 +34,14 @@ class ArticleCreateForm extends Component {
         this.state = {
             categorysArr: [],
             content: '',
+            // 标签
+            tagsArr:''
             // mdContent: '',
             // previewContent: ''
         }
         this.props.form.validateFields();
         this._getActiveCategorys();
+        this._getTags();
     }
 
     componentDidMount() {
@@ -97,6 +100,23 @@ class ArticleCreateForm extends Component {
         })
     }
 
+    // 获取标签
+	_getTags = () => {
+		getTags().then((res)=>{
+			let code = res.data.code;
+			let msg = res.data.msg;
+			if(code === 200) {
+				this.setState({
+					tagsArr: res.data.data.tags
+				}, ()=> {
+                    console.log(this.state.tagsArr)
+                })
+			}else {
+				message.error(msg);
+			} 
+        })
+    }
+
     // 提交
     handleSubmit = (e) => {
         e.preventDefault();
@@ -115,6 +135,9 @@ class ArticleCreateForm extends Component {
 		let category = this.state.categorysArr.find(n => n.id === data.categoryId).name;
         Object.assign(data, {category: category});
         Object.assign(data, {content: this.state.content});
+        if(data['tags']) {
+            data['tags'] = JSON.stringify(data['tags']);
+        }
 		createArticle(data).then((res)=>{
 			let code = res.data.code;
 			let msg = res.data.msg;
@@ -123,7 +146,8 @@ class ArticleCreateForm extends Component {
                 // 初始化表单
                 this.props.form.resetFields();
                 this.setState({
-                    content: ''
+                    content: '',
+                    tags: []
                 })
 			}else {
 				message.error(msg);
@@ -146,8 +170,13 @@ class ArticleCreateForm extends Component {
     }
 
     render() {
-        const { categorysArr, content, previewContent, mdContent } = this.state;
+        const { categorysArr, tagsArr, content, previewContent, mdContent } = this.state;
         const { getFieldDecorator } = this.props.form;
+        // 标签options
+        const children = [];
+        for(let i in tagsArr) {
+            children.push(<Option key={i} value={tagsArr[i].name}>{tagsArr[i].name}</Option>);
+        }
         return (
             <div className="article-create__formContainer">
                 <Form className="article-create__form" onSubmit={this.handleSubmit.bind(this)}>
@@ -167,7 +196,9 @@ class ArticleCreateForm extends Component {
 						{getFieldDecorator('tags', {
 							rules: [{ required: true, message: '请输入至少一个标签！' }],
 						})(
-							<Input prefix={<Icon type="copy" style={{ fontSize: 13 }} />} placeholder="请输入至少一个标签" autoComplete="off" />
+                            <Select mode="tags" tokenSeparators={[',']} placeholder="请输入获选中标签" >
+                                {children}
+                            </Select> 
 						)}
 					</FormItem>
                     <FormItem label="所属分类：">

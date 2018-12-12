@@ -40,6 +40,8 @@ export const deleteCategory = params => post('/api/v1/category/delete-category',
  */
 // 获取文章列表
 export const getArticlesList = params => get('/api/v1/article/get-articles-list', params);
+// 获取标签
+export const getTags = params => get('/api/v1/tags/get-tags', params);
 // 获取文章详情
 export const getArticleDetail = params => get('/api/v1/article/get-article-detail', params);
 // 新增文章
@@ -48,7 +50,6 @@ export const createArticle = params => post('/api/v1/article/create-article', pa
 export const updateArticle = params => post('/api/v1/article/update-article', params);
 // 删除文章
 export const deleteArticle = params => post('/api/v1/article/delete-article', params);
-
 
 // /*通用*/
 // // 首页
