@@ -7,6 +7,7 @@ import Home from '../Home/Home';
 import UsersList from '../UsersList/UsersList';
 import CategorysList from '../CategorysList/CategorysList';
 import ArticlesList from '../ArticlesList/ArticlesList';
+import ArticleCreate from '../ArticlesList/ArticleCreate';
 //import Setting from '../Setting/Setting';
 import ChangePwd from '../ChangePwd/ChangePwd';
 import NoMatch from '../common/404';
@@ -34,6 +35,12 @@ const routerArr = [
     'key': 3,
     'name': '分类管理',
     'path': '/app/categorys-list',
+    'icon': 'user'
+  },
+  {
+    'key': 4,
+    'name': '新建文章',
+    'path': '/app/article-create',
     'icon': 'user'
   },
   {
@@ -222,6 +229,7 @@ export default class App extends Component {
                 <Route path="/app/users-list" component={UsersList}/>  
                 <Route path="/app/categorys-list" component={CategorysList}/>  
                 <Route path="/app/articles-list" component={ArticlesList}/>   
+                <Route path="/app/article-create" component={ArticleCreate}/>   
                 {/*<Route path="/app/setting" component={Setting}/>*/}
                 <Route path="/app/changePwd" component={ChangePwd}/>
                 <Route component={NoMatch}/> 

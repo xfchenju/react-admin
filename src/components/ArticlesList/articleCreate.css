@@ -1,0 +1,12 @@
+.article-create {
+    padding: 10px 30px;
+    margin: 20px;
+    box-sizing: border-box;
+    width: calc(100% - 40px);
+    min-height: calc(100vh - 104px);
+    background: #fff;
+}
+.article-create__formContainer {
+    padding: 20px 0;
+    box-sizing: border-box;
+}
